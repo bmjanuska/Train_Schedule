@@ -11,112 +11,106 @@
 
   var database = firebase.database();
 
-// Button to add trains
+// 2. Button for adding trains
 $("#add-train-btn").on("click", function(event) {
   event.preventDefault();
 
-// Grabbing the user input
-  var shinkanTrain = $("#train-input").val();
-  var shinkanDest = $("#destination-input").val();
-  var shinkanTime = moment($("#firstTime-input").val(), "HH:mm");
-  var shinkanFreq = $("#frequency-input").val();
+  // Grabs user input
+  var trainName = $("#train-input").val().trim();
+  var trainDestination = $("#destination-input").val().trim();
 
-  //converting the user time by pushing back 1 year so it comes to current time 
-  var shinkanConTime = moment(shinkanTime, "hh:mm").subtract(1, "years");
-  console.log(shinkanConTime);
+  //------ maths 
+
+  var firstTrain = $("#first-train").val().trim();
+
+  var frequency = $("#frequency-input").val().trim();
+
+  // convert time. push back 1 year
+  var firstTrainConversion = moment(firstTrain, "HH:mm").subtract(1, "years");
+  console.log(firstTrainConversion);
 
   //current time 
   var currentTime = moment();
-  console.log ("CURRENT TIME: " + moment(currentTime).format("hh:mm"));
+  console.log("Current Time: " + moment(currentTime).format("hh:mm"));
 
-  //difference between user entered time and current time 
-  var timeDiff = moment().diff(moment(shinkanConTime), "minutes");
-  console.log("DIFFERENCE IN TIME: " + timeDiff);
+  //time difference 
+  var timeDiff = moment().diff(moment(firstTrainConversion), "minutes");
+  console.log("difference in time: " + timeDiff);
 
-  //time apart / remainder for future freq calc
-  var timeRemain = timeDiff % shinkanFreq; 
-  console.log (timeRemain);
+  //time apart or remainder
+  var timeRemain = timeDiff % frequency;
+  console.log(timeRemain);
 
-  //minutes until train 
-  var timeMinNextShinkan = shinkanFreq - timeRemain; 
-  console.log("MIN TILL TRAIN: " + timeMinNextShinkan);
+  //min until train
+  var timeUntilTrain = frequency - timeRemain;
+  console.log("min until train: " + timeUntilTrain);
 
-  // next train
-  var nextShinkan = moment().add(timeMinNextShinkan, "minutes");
-  console.log("ARRIVAL TIME: " + moment(nextShinkan).format("hh:mm"));
+  //next train
+  // var nextTrain = moment().add(timeUntilTrain, "minutes");
+  // console.log("arrival time: " + moment(newTrain).format("hh:mm"));
 
-// Creating local "temporary" object for holding train info
+
+
+
+  // Creates local "temporary" object for holding train data
   var newTrain = {
-    train: shinkanTrain,
-    destination: shinkanDest,
-    time: shinkanTime,
-    frequency: shinkanFreq,
-    next: nextShinkan, 
-    nexttime: timeMinNextShinkan
+    name: trainName,
+    destination: trainDestination,
+    frequency: frequency,
+    minutes: timeUntilTrain,
+    // nextTrainTime: nextTrain,
   };
 
-// Upload train info to database 
-
-console.log(shinkanTrain);
-
-
+  // Uploads train data to the database
   database.ref().push(newTrain);
 
-//log everything to console. testing
-  console.log(shinkanTrain.train);
-  console.log(shinkanDest.destination);
-  console.log(shinkanTime.time);
-  console.log(shinkanFreq.frequency);
+  // Logs everything to console
+  console.log(newTrain.name);
+  console.log(newTrain.destination);
+  console.log(newTrain.frequency);
+  console.log(newTrain.nextTrainTime);
+  // console.log(newTrain.minutes);
 
-//alert that an employee has been successfully added
+
   alert("Train successfully added");
 
-// clear inputs from the text boxes
+  // Clears all of the text-boxes
   $("#train-input").val("");
   $("#destination-input").val("");
-  $("#firstTime-input").val("");
+  $("#first-train").val("");
   $("#frequency-input").val("");
+
 });
 
-// firebase event for adding train to the database
-// also adding rows in our table from what the user added in the form 
+// 3. Create Firebase event for adding train to the database and a row in the html when a user adds an entry
 database.ref().on("child_added", function(childSnapshot) {
   console.log(childSnapshot.val());
 
-// storing everything into a variable 
-  var shinkanTrain = childSnapshot.val().train;
-  var shinkanDest = childSnapshot.val().destination;
-  var shinkanTime = childSnapshot.val().time;
-  var shinkanFreq = childSnapshot.val().frequency;
-  var nextShinkan = childSnapshot.val().next;
-  var timeMinNextShinkan = childSnapshot.val().nexttime;
+  // Store everything into a variable.
+  var trainName = childSnapshot.val().name;
+  var trainDest = childSnapshot.val().destination;
+  var frequency = childSnapshot.val().frequency;
+  var minutes = childSnapshot.val().timeUntilTrain;
+  // var nextTrainTime = childSnapshot.val().nextTrain;
 
+  // train Info
+  console.log(trainName);
+  console.log(trainDest);
+  console.log(frequency);
+  console.log(minutes);
+  // console.log(nextTrainTime);
 
-// train info console.log
-  console.log(shinkanTrain);
-  console.log(shinkanDest);
-  console.log(nextShinkan);
-  console.log(timeMinNextShinkan);
-
-// // moment calculations for the next arrival
-//   var shinkanNextArrival = moment.unix(shinkanStart).format("HH:mm");
-
-// // moment calculations for minuets away
-//   var shinkanMinutesAway = moment().diff(moment(shinkanStart, "X"), "months");
-//   console.log(shinkanMonths);
-
-// creating a new row for the DOM
+  // Create the new row
   var newRow = $("<tr>").append(
-    $("<td>").text(shinkanTrain),
-    $("<td>").text(shinkanDest),
-    $("<td>").text(shinkanFreq),
-    $("<td>").text(nextShinkan),
-    $("<td>").text(timeMinNextShinkan),
+    $("<td>").text(trainName),
+    $("<td>").text(trainDest),
+    $("<td>").text(frequency),
+    $("<td>").text(minutes),
+    // $("<td>").text(nextTrain)
+
   );
 
-// appending the new row to the body 
+  // Append the new row to the table
   $("#train-table > tbody").append(newRow);
 });
 
-// Math 
-//--------------------------------------------
