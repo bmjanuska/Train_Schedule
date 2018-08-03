@@ -1,0 +1,27 @@
+    #train-table th, td {
+      display: inline-block;
+      width: 16.575%;
+    }
+    }
+
+ .jumbotron {
+	background: url('https://upload.wikimedia.org/wikipedia/commons/6/6e/Rathong_from_Zemathang2.jpg');
+	background-size: cover;
+}
+
+/*.jumbotron:after {
+	content: '';
+	display: block;
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	background: rgba(127, 127, 127, 0.5);
+	background-image: radial-gradient(black 33%, transparent 33%);
+	background-size: 2px 2px;
+}
+*/
+
+use this for the header dude. and put the polka dots 
+https://vimeo.com/132948397
