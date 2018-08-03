@@ -46,8 +46,8 @@ $("#add-train-btn").on("click", function(event) {
   console.log("min until train: " + timeUntilTrain);
 
   //next train
-  // var nextTrain = moment().add(timeUntilTrain, "minutes");
-  // console.log("arrival time: " + moment(newTrain).format("hh:mm"));
+  var nextTrain = moment().add(timeUntilTrain, "minutes");
+  console.log("arrival time: " + moment(newTrain).format("hh:mm"));
 
 
 
@@ -58,7 +58,7 @@ $("#add-train-btn").on("click", function(event) {
     destination: trainDestination,
     frequency: frequency,
     minutes: timeUntilTrain,
-    // nextTrainTime: nextTrain,
+    nextTrainTime: nextTrain,
   };
 
   // Uploads train data to the database
@@ -69,7 +69,7 @@ $("#add-train-btn").on("click", function(event) {
   console.log(newTrain.destination);
   console.log(newTrain.frequency);
   console.log(newTrain.nextTrainTime);
-  // console.log(newTrain.minutes);
+  console.log(newTrain.minutes);
 
 
   alert("Train successfully added");
@@ -91,14 +91,14 @@ database.ref().on("child_added", function(childSnapshot) {
   var trainDest = childSnapshot.val().destination;
   var frequency = childSnapshot.val().frequency;
   var minutes = childSnapshot.val().timeUntilTrain;
-  // var nextTrainTime = childSnapshot.val().nextTrain;
+  var nextTrainTime = childSnapshot.val().nextTrain;
 
   // train Info
   console.log(trainName);
   console.log(trainDest);
   console.log(frequency);
   console.log(minutes);
-  // console.log(nextTrainTime);
+  console.log(nextTrainTime);
 
   // Create the new row
   var newRow = $("<tr>").append(
@@ -106,7 +106,7 @@ database.ref().on("child_added", function(childSnapshot) {
     $("<td>").text(trainDest),
     $("<td>").text(frequency),
     $("<td>").text(minutes),
-    // $("<td>").text(nextTrain)
+    $("<td>").text(nextTrainTime)
 
   );
 
